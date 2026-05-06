@@ -162,6 +162,13 @@ def preprocess_biored_for_re(example):
     existing_relations = {(r["arg1_id"], r["arg2_id"]): r["type"] for r in example["relations"]}
 
     re_samples = []
+    #TODO: Commented out alternative to be tried out if for training current implementation of method returning a dictionary in the way it currently does (even though as per HuggingFace it does need to return a dictionary) causes problems
+    '''texts = []
+    ent1_list = []
+    ent2_list = []
+    labels = []
+
+    context = " ".join(example["passages"][0]["text"])'''
     # Generate every possible combination of 2 entities in the document
     for ent1, ent2 in itertools.combinations(entities, 2):
         pair = (ent1["id"], ent2["id"])
@@ -185,6 +192,18 @@ def preprocess_biored_for_re(example):
             "label": relation_type
         })
     return {"re_data": re_samples}
+    #TODO: Commented out alternative to be tried out if for training current implementation of method returning a dictionary in the way it currently does (even though as per HuggingFace it does need to return a dictionary) causes problems
+    '''texts.append(context)
+        ent1_list.append(ent1["text"][0])
+        ent2_list.append(ent2["text"][0])
+        labels.append(relation_type)
+
+    return {
+        "text": texts,
+        "entity_1": ent1_list,
+        "entity_2": ent2_list,
+        "label": labels
+    }'''
 
 # Usage
 # re_dataset = train.map(preprocess_biored_for_re)
@@ -200,9 +219,9 @@ if __name__ == "__main__":
     #print(train_ner[0])
     #print("NER data preprocessing complete")
 
-    '''train_re = train.map(preprocess_biored_for_re) #, batched=True) # apply to train subset
+    train_re = train.map(preprocess_biored_for_re) #, batched=True) # apply to train subset
     val_re = val.map(preprocess_biored_for_re) #, batched=True)  # apply to val subset
-    test_re = test.map(preprocess_biored_for_re) #, batched=True)  # apply to test subset'''
+    test_re = test.map(preprocess_biored_for_re) #, batched=True)  # apply to test subset
 
     #print(train_re[0])
     #print("RE data preprocessing complete")
@@ -211,9 +230,13 @@ if __name__ == "__main__":
     val_ner.set_format(type="torch") # convert it to tensor for torch and Transformers to be able to handle the val subset for NER
     test_ner.set_format(type="torch") # convert it to tensor for torch and Transformers to be able to handle the test subset for NER
 
-    '''train_re.set_format(type="torch") # convert it to tensor for torch and Transformers to be able to handle the training subset for RE
+    train_re.set_format(type="torch") # convert it to tensor for torch and Transformers to be able to handle the training subset for RE
     val_re.set_format(type="torch") # convert it to tensor for torch and Transformers to be able to handle the val subset for RE
-    test_re.set_format(type="torch") # convert it to tensor for torch and Transformers to be able to handle the test subset for RE'''
+    test_re.set_format(type="torch") # convert it to tensor for torch and Transformers to be able to handle the test subset for RE
+
+
+
+
 
 
 
